@@ -1,6 +1,6 @@
 defmodule ChatServer do
 	
-	def start, do: spawn(Server, :init, [])
+	def start, do: spawn(__MODULE__, :init, [])
 
 	def init do
 		Process.flag(:trap_exit, true)
@@ -11,7 +11,7 @@ defmodule ChatServer do
 		receive do
 			{sender, :connect, username} ->
 				Process.link(sender)
-				broadcast({:info, username <> "joined the chat"},
+				broadcast({:info, username <> " joined the chat"}, clients)
 				loop([{username, sender} | clients])
 
 			{sender, :broadcast, msg} ->
@@ -19,11 +19,12 @@ defmodule ChatServer do
 				loop(clients)
 
 			{:EXIT, pid, _} ->
-				broadcast({:info, find(pid, clients) <> "left the chat"}, clients)
+				broadcast({:info, find(pid, clients) <> " left the chat"}, clients)
 				loop(clients |> Enum.filter(fn {_, rec}
-					-> rec != pid end))
-			end
+					-> rec != pid 
+					end))
 		end
+	end
 
 		defp broadcast(msg, clients) do
 			Enum.each clients, fn {_, rec}
