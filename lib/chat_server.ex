@@ -1,36 +1,43 @@
 defmodule ChatServer do
-	
-	def start, do: spawn(__MODULE__, :init, [])
+  
+  def start, do: spawn(__MODULE__, :init, [])
 
-	def init do
-		Process.flag(:trap_exit, true)
-		loop([])
-	end
+  def init do
+    Process.flag(:trap_exit, true)
+    loop([])
+  end
 
-	def loop(clients) do
-		receive do
-			{sender, :connect, username} ->
-				Process.link(sender)
-				broadcast({:info, username <> " joined the chat"}, clients)
-				loop([{username, sender} | clients])
+  def loop(clients) do
+    receive do
+      {sender, :connect, username} ->
+        Process.link(sender)
+        broadcast({:info, username <> " joined the chat"}, clients)
+        loop([{username, sender} | clients])
 
-			{sender, :broadcast, msg} ->
-				broadcast({:new_msg, find(sender, clients), msg}, clients)
-				loop(clients)
+      {sender, :broadcast, msg} ->
+        broadcast({:new_msg, find(sender, clients), msg}, clients)
+        loop(clients)
 
-			{:EXIT, pid, _} ->
-				broadcast({:info, find(pid, clients) <> " left the chat"}, clients)
-				loop(clients |> Enum.filter(fn {_, rec}
-					-> rec != pid 
-					end))
-		end
-	end
+      {sender, :priv, msg, rec} ->
+        priv({:new_msg, find(sender, clients), msg}, rec)
+        loop(clients)
 
-		defp broadcast(msg, clients) do
-			Enum.each clients, fn {_, rec}
-				-> send rec, msg end
-		end
+      {:EXIT, pid, _} ->
+        broadcast({:info, find(pid, clients) <> " left the chat"}, clients)
+        loop(clients |> Enum.filter(fn {_, rec}
+          -> rec != pid 
+          end))
+    end
+  end
 
-		defp find(sender, [{u, p} | _]) when p == sender, do: u
-		defp find(sender, [_ | t]), do: find(sender,t)
+    defp broadcast(msg, clients) do
+      Enum.each(clients, fn {_, rec}
+        -> send(rec, msg)
+      end)
+    end
+
+    defp priv(msg, rec), do: send(rec, msg)
+
+    defp find(sender, [{u, p} | _]) when p == sender, do: u
+    defp find(sender, [_ | t]), do: find(sender,t)
 end
