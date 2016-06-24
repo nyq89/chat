@@ -19,7 +19,7 @@ defmodule ChatServer do
         loop(clients)
 
       {sender, :priv, msg, rec} ->
-        priv({:new_msg, find(sender, clients), msg}, rec)
+        priv({:new_msg, find(sender, clients), msg}, rec, clients)
         loop(clients)
 
       {:EXIT, pid, _} ->
@@ -36,7 +36,11 @@ defmodule ChatServer do
       end)
     end
 
-    defp priv(msg, rec), do: send(rec, msg)
+    defp priv(msg, rec, clients) do
+      Enum.each(clients, fn {u, p}
+        -> if rec  == u do
+          send(p, msg) end end)
+    end
 
     defp find(sender, [{u, p} | _]) when p == sender, do: u
     defp find(sender, [_ | t]), do: find(sender,t)

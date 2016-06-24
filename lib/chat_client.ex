@@ -1,6 +1,7 @@
 defmodule ChatClient do
 
-  def connect(username, server), do: spawn(__MODULE__, :init, [username, server])
+  def connect(username, server), 
+    do: spawn(__MODULE__, :init, [username, server])
 
   def init(username, server) do
     send(server, {self, :connect, username})
@@ -19,6 +20,10 @@ defmodule ChatClient do
 
       {:send, msg} ->
         send(server, {self, :broadcast, msg})
+        loop(username, server)
+
+      {:priv, rec, msg} ->
+        send(server, {self, :priv, msg, rec})
         loop(username, server)
 
       :disconnect ->
