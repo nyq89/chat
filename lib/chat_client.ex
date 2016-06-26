@@ -18,6 +18,10 @@ defmodule ChatClient do
         IO.puts(~s{[#{username}'s client] - #{from}: #{msg}})
         loop(username, server)
 
+      {:new_priv_msg, from, msg} ->
+        IO.puts (~s{[#{username}'s client] - #{from}(Private): #{msg}})
+        loop(username, server)
+
       {:send, msg} ->
         send(server, {self, :broadcast, msg})
         loop(username, server)

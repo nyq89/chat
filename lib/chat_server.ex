@@ -19,7 +19,7 @@ defmodule ChatServer do
         loop(clients)
 
       {sender, :priv, msg, rec} ->
-        priv({:new_msg, find(sender, clients), msg}, rec, clients)
+        priv({:new_priv_msg, find(sender, clients), msg}, rec, clients)
         loop(clients)
 
       {:EXIT, pid, _} ->
