@@ -1,4 +1,4 @@
-defmodule ChatServer do
+defmodule Chat.ChatServer do
 
   def start, do: spawn(__MODULE__, :init, [])
 

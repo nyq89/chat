@@ -1,4 +1,4 @@
-defmodule ChatClient do
+defmodule Chat.ChatClient do
 
   def connect(username, server),
     do: spawn(__MODULE__, :init, [username, server])
