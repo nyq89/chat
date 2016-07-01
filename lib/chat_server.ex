@@ -1,5 +1,5 @@
 defmodule ChatServer do
-  
+
   def start, do: spawn(__MODULE__, :init, [])
 
   def init do
@@ -19,13 +19,13 @@ defmodule ChatServer do
         loop(clients)
 
       {sender, :priv, msg, rec} ->
-        priv({:new_msg, find(sender, clients), msg}, rec, clients)
+        priv({:new_priv_msg, find(sender, clients), msg}, rec, clients)
         loop(clients)
 
       {:EXIT, pid, _} ->
         broadcast({:info, find(pid, clients) <> " left the chat"}, clients)
         loop(clients |> Enum.filter(fn {_, rec}
-          -> rec != pid 
+          -> rec != pid
           end))
     end
   end
