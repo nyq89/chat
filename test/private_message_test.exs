@@ -14,6 +14,5 @@ defmodule Chat.PrivateMessageTest do
     :timer.sleep(500)
 
     send(hashi, {:priv, "gashi", "legget"})
-    :timer.sleep(500)
   end
 end
