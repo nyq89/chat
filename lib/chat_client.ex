@@ -1,6 +1,6 @@
-defmodule ChatClient do
+defmodule Chat.ChatClient do
 
-  def connect(username, server), 
+  def connect(username, server),
     do: spawn(__MODULE__, :init, [username, server])
 
   def init(username, server) do
@@ -13,9 +13,13 @@ defmodule ChatClient do
       {:info, msg} ->
         IO.puts(~s{[#{username}'s clients] - #{msg}})
         loop(username, server)
-    
+
       {:new_msg, from, msg} ->
-        IO.puts(~s{[#{username}'s client] - #{from}: #{msg}})
+        IO.puts(~s{[#{username}'s client] - From #{from}: #{msg}})
+        loop(username, server)
+
+      {:new_priv_msg, from, msg} ->
+        IO.puts(~s{[#{username}'s client] - From #{from}(Private): #{msg}})
         loop(username, server)
 
       {:new_priv_msg, from, msg} ->
@@ -27,6 +31,7 @@ defmodule ChatClient do
         loop(username, server)
 
       {:priv, rec, msg} ->
+        IO.puts(~s{[#{username}'s client] - To #{rec}(Private): #{msg}})
         send(server, {self, :priv, msg, rec})
         loop(username, server)
 
