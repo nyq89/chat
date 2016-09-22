@@ -19,7 +19,7 @@ defmodule Chat.ChatServer do
 
       {sender, :join_channel, username, channelname} ->
         clients = Map.get(channels, channelname)
-        broadcast({:info, "[" <> channelname <> "]" <> 
+        broadcast({:info, "[" <> channelname <> "]" <>
           username <> " joined the channel"},
           Map.get(channels, channelname),
           channelname)
@@ -44,10 +44,10 @@ defmodule Chat.ChatServer do
         leave(sender, channelname, channels)
         channels = %{channels | channelname => channel}
         loop(channels)
-        
+
       {sender, :EXIT, userchannels} ->
         name = Map.get(channels, :clients) |> find(sender)
-        Enum.eache(userchannels, fn(x) -> 
+        Enum.eache(userchannels, fn(x) ->
           leave(sender, x, channels)
           channels =%{channels | x => channel_update(Map.get(channels, x), name)}
         end)

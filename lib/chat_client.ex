@@ -17,13 +17,13 @@ defmodule Chat.ChatClient do
       {:join, channelname} ->
         send(server, {self, :join_channel, username, channelname})
         loop(username, server, [channelname | channels])
-      
+
       {:leave, channelname} ->
         send(server, {self, :leave_chanel, username, channelname})
         channels = List.delete(channels, channelname)
         loop(username, server, channels)
 
-      {:new_msg, from, {msg, channelname}} ->
+      {{:new_msg, from, msg}, channelname} ->
         IO.puts(~s{[#{username}'s client][#{channelname}] - From #{from}: #{msg}})
         loop(username, server, channels)
 
