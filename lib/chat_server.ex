@@ -18,13 +18,12 @@ defmodule Chat.ChatServer do
         loop(channels)
 
       {sender, :join_channel, username, channelname} ->
-        clients = Map.get(channels, channelname)
+        channel = Map.get(channels, channelname, [])
+        channels = Map.put(channels, channelname, [{username, sender} | channel])
         broadcast({:info, "[" <> channelname <> "]" <>
           username <> " joined the channel"},
           Map.get(channels, channelname),
           channelname)
-
-        channels =%{channels | channelname => [{username, sender} | clients]}
         loop(channels)
 
       {sender, :broadcast, msg, channelname} ->

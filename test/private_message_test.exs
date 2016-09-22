@@ -13,7 +13,11 @@ defmodule Chat.PrivateMessageTest do
     jabbe = ChatClient.connect("jabbe", server)
     :timer.sleep(500)
     send(hashi, {:priv, "gashi", "legget"})
+    send(hashi, {:join, "testChan"})
+    send(jabbe, {:join, "testChan"})
     :timer.sleep(500)
     send(jabbe, {:send, "All them gashihashis", "main"})
+    :timer.sleep(500)
+    send(hashi, {:send, "This might work", "testChan"})
   end
 end

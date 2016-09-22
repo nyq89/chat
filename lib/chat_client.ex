@@ -35,7 +35,7 @@ defmodule Chat.ChatClient do
         if Enum.member?(channels, channelname) do
           send(server, {self, :broadcast, msg, channelname})
         else
-          IO.puts("Not in channel #{channelname}")
+          IO.puts(~s{[#{username}'s client] - Not in channel #{channelname}})
         end
         loop(username, server, channels)
 
