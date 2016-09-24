@@ -11,7 +11,7 @@ defmodule Chat.ChatClient do
   def loop(username, server, channels) do
     receive do
       {{:info, msg}, channelname} ->
-        IO.puts(~s{[#{username}'s clients][#{channelname}] - #{msg}})
+        IO.puts(~s{[#{username}'s client][#{channelname}] - #{msg}})
         loop(username, server, channels)
 
       {:join, channelname} ->
